@@ -1,0 +1,12 @@
+---
+instances: 1
+memory: 512M
+applications:
+  - name: vault
+    host: vault-shyam
+    path: target/vault-helper-0.0.1-SNAPSHOT.jar
+    services:
+      - SSO
+    env:
+      CF_TARGET: https://api.sys.dev.gsdcf.manulife.com
+      GRANT_TYPE: password

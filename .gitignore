@@ -1,0 +1,36 @@
+.gradle
+target
+myvault
+build
+gradle/
+classes/
+
+# Java class files
+*.class
+
+#Vagrant Files
+sqlServer/.vagrant
+
+# Eclipse
+.classpath
+.project
+.settings/
+
+# Intellij
+.idea/
+*.iml
+*.iws
+
+# Mac
+.DS_Store
+
+# Maven
+log/
+target/
+
+# Secrest
+config/secrets_*
+config/concourse-credentials.yml
+
+#Concouse
+pipeline.yml

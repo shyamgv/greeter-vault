@@ -1,0 +1,62 @@
+1) Create a Policy for authorization
+	Create a policy file with file format .hcl like below.
+		
+		path "sys/*" {
+		  policy = "deny"
+		}
+
+		path "secret/*" {
+		  policy = "write"
+		}
+
+		path "auth/approle/*" {
+		  policy = "read"
+		}
+
+		path "postgresql/creds/*" {
+		  policy = "read"
+		}
+	
+	https://www.vaultproject.io/intro/getting-started/acl.html
+	
+2) Writing a policy
+	
+	$ vault policy-write <name of the policy> <file name>
+	$ vault policies (shows available policies) - available to users with root access
+	$ vault policies <policy name> (shows contents of the policy) - available to users with root access
+	$ vault auth <token> (to change the token for authentication)
+	
+3) Enable AppRole authentication
+	Create environment vauriable with root token VAULT_TOKEN
+	
+	$ curl -X POST -H "X-Vault-Token:$VAULT_TOKEN" -d '{"type":"approle"}' https://127.0.0.1:8200/v1/sys/auth/approle -k
+	
+4) Create an AppRole with desired set of policies
+	$ curl -X POST -H "X-Vault-Token:$VAULT_TOKEN" -d '{"policies":"secret"}' https://127.0.0.1:8200/v1/auth/approle/role/readonly -k
+	
+5) Fetch Role ID
+	$ curl -X GET -H "X-Vault-Token:$VAULT_TOKEN" https://127.0.0.1:8200/v1/auth/approle/role/readonly/role-id -k
+
+Response:
+	{"request_id":"41b4cb5f-37d7-7617-0a21-0391b426cb96","lease_id":"","renewable":f
+	alse,"lease_duration":0,"data":{"role_id":"0a34e888-903f-9ff4-73b6-6fbbf8b25024"
+	},"wrap_info":null,"warnings":null,"auth":null}
+	
+6) Create new Secret ID under the identifier
+	$ curl -X POST -H "X-Vault-Token:$VAULT_TOKEN" https://127.0.0.1:8200/v1/auth/approle/role/readonly/secret-id -k
+
+Response:	
+	{"request_id":"2ed92aa5-cf6f-1f6e-271c-5e91448ab5af","lease_id":"","renewable":f
+	alse,"lease_duration":0,"data":{"secret_id":"15e2c8db-2362-8f37-3f0b-0ff1ea6882a
+	b","secret_id_accessor":"352f88d8-2d8e-23c6-715a-6e977098fa04"},"wrap_info":null
+	,"warnings":null,"auth":null}
+
+7) Perform to create login token
+	$ curl -X POST -d '{"role_id":"0a34e888-903f-9ff4-73b6-6fbbf8b25024","secret_id":"15e2c8db-2362-8f37-3f0b-0ff1ea6882ab"}' https://127.0.0.1:8200/v1/auth/approle/login -k
+
+Response:
+	{"request_id":"1c669b98-7e32-c337-7d15-63649f33deec","lease_id":"","renewable":f
+	alse,"lease_duration":0,"data":null,"wrap_info":null,"warnings":null,"auth":{"cl
+	ient_token":"da935c9f-1fe2-f5bd-4c60-7d638b2f4aaa","accessor":"b86121fe-a112-678
+	d-ba99-1c36fb7172fc","policies":["default","secret"],"metadata":{},"lease_durati
+	on":2400,"renewable":true}}
