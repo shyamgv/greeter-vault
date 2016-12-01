@@ -1,5 +1,5 @@
-Spring Cloud Vault GreeterApplication
-=====================================
+Spring Cloud Vault for dynamic secrets with AppRole auth backend
+================================================================
 1) Set-up Vault-Token on your local by downloading it from https://www.vaultproject.io/downloads.html
 
 2) Refer to the vault.conf file we have backend as file. For difference between different backends and suitability of their implementation refer. 
